@@ -16,8 +16,15 @@ model Team {
 model User {
   id          Int      @id @default(autoincrement())
   name        String[] @db.VarChar
+  password    String[] @db.VarChar
   surname     String[] @db.VarChar
   email       String[] @unique @db.VarChar
   phoneNumber String[] @db.VarChar
+  role        Role     @default(USER)
   teams        Team[]     
+}
+
+enum Role {
+    USER
+    ADMIN
 }

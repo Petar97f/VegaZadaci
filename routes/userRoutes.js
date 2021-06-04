@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
 // eslint-disable-next-line import/order
 const fs = require('fs');
 
@@ -8,13 +9,14 @@ const router = express.Router();
 router.param('id', userController.checkID);
 
 
-
+router.post("/signup", authController.signup);
+router.post("/login", authController.login);
 
 
 
 
 router.route("/")
-.get(userController.getAllUsers)
+.get(authController.protect,authController.restrictTo("USER"),userController.getAllUsers)
 .post(userController.checkBody, userController.createUser);
 
 router.route("/:id")

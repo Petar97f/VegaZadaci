@@ -2,13 +2,10 @@ const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const express = require('express');
 const e = require('express');
+var UserModel = require('./../models/userModel');
 const  userService  = require('./../services/userService.js');
 
 const prisma = new PrismaClient();
-
-
-
-
 
 exports.checkID = (req, res, next, val) => {
     const users =  userService.fAllUsers();
@@ -44,12 +41,12 @@ exports.checkIfUserExitsByEmail =(req, res, next) => {
             message: "Already exists"
         })
       }
-      
     })
 }
 
 
 exports.getAllUsers = (req, res) => {
+    console.log("eeeeee");
     userService.fAllUsers().then(data => {
     res.status(200).json({
         status: "success",
@@ -65,6 +62,8 @@ exports.getUser = (req, res) => {
     const id = req.params.id * 1;
   
     const user = userService.findById(id).then(data =>{
+        let user1 = new UserModel(data.name,data.surname,data.email,data.phoneNumber);
+        console.log(user1.email);
         if(data == null){
             res.status(404).json({
                 status: 'fail',
@@ -109,13 +108,8 @@ exports.addToTeam = (req, res) =>{
             }
         });
     });
-    
-
-      
-     
+       
 };
-
-
 
 exports.updateUser = (req, res) => {
     const idd = req.params.id * 1;
@@ -177,15 +171,6 @@ exports.deleteUser = (req, res) => {
             });
         }
     });
-    
-
-
-    
+       
 }
-
-
-
-
-
-
 

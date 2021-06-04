@@ -122,7 +122,5 @@ exports.deleteTeam = (req, res) => {
         })
     });
 
-
-    
 }
 

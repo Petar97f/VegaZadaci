@@ -5,18 +5,17 @@ const e = require('express');
 
 const prisma = new PrismaClient();
 
-
 async function fAllUsers(){
     
     return await prisma.user.findMany();
 }
 
-//Create user function (rename later)
 async function createUserr(userr) {
-    console.log("ovdeeee");
+    
     const name1 = userr.name;
     const surname1 = userr.surname;
     const email1 = userr.email;
+    const password1 = userr.password;
     const phoneNumber1 = userr.phoneNumber;
     
     return userCheck = await prisma.user.findUnique({
@@ -31,17 +30,14 @@ async function createUserr(userr) {
                     name: name1,
                     surname: surname1,
                     email: email1,
+                    password: password1,
                     phoneNumber: phoneNumber1
                 },
             });
-            console.log("data:  "+user1);
             return user1;
         }else {
-            console.log("si ovde nekako ???");
             return null;
         }
-        
-        
     });
     
 }
@@ -50,21 +46,18 @@ async function createUser(req, res) {
     
     const newUser = req.body;
     
-    
-    
     const userCheck = await prisma.user.findUnique({
         where: {
           email: req.body.email,
         },
       }).then(data =>{
         if(data == null){
-            console.log("usao ovede");
-            //console.log(data);
              const user1 = prisma.user.create({
                 data: {
                     name: req.body.name,
                     surname: req.body.surname,
                     email: req.body.email,
+                    password: req.body.password,
                     phoneNumber: req.body.phoneNumber
                 },
             }).then(data => {
@@ -88,8 +81,6 @@ async function createUser(req, res) {
 
     });
     
-
-     
 };
 
 async function findById(idd){
@@ -100,10 +91,22 @@ async function findById(idd){
         include : {
             teams: true,
         }
-      })
+      });
       
       return user;
 }    
+
+async function findByEmail(emaill){
+    console.log("hereeeeeeeeee  "+ emaill);
+
+     userCheck = await prisma.user.findUnique({
+        where: {
+          email: emaill,
+        },
+      });
+      console.log("hereeeeeeeeee  "+ userCheck);
+      return userCheck;
+} 
 
 
 async function findByIdTeam(idd){
@@ -112,7 +115,7 @@ async function findByIdTeam(idd){
           id: idd,
         },
       })
-      //console.log(user);
+  
       return team;
 } 
 
@@ -126,6 +129,7 @@ async function updateUserr(userr,id2){
           name: userr.name,
           surname: userr.surname,
           email: userr.email,
+          password: userr.password,
           phoneNumber: userr.phoneNumber
         },
       });
@@ -141,26 +145,17 @@ async function checkIfExistsInTeam(id2,id3){
             teams: true,
         }
       });
-
-      
       if( user.teams.some(team => team.id === id3)){
           return null;
       }
       return user;
 }
 
-
 async function addToTeamm(id2,id3){
-    
-    
     return checkIfExistsInTeam(id2,id3).then(data => {
         if(data == null){
             return null;
         }else{
-    
-
-
-
         const updateUser =  prisma.user.update({
         
         where: {
@@ -188,11 +183,11 @@ async function deleteUserr(idd){
       }
 }
 
-
 module.exports.fAllUsers = fAllUsers;
 module.exports.createUserr = createUserr;
 module.exports.createUser = createUser;
 module.exports.findById = findById;
+module.exports.findByEmail = findByEmail;
 module.exports.findByIdTeam = findByIdTeam;
 module.exports.updateUserr = updateUserr;
 module.exports.checkIfExistsInTeam = checkIfExistsInTeam;
